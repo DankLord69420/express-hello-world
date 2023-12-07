@@ -3,6 +3,12 @@ const mysql = require('mysql');
 const app = express();
 const port = 3001;
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  // Add other necessary headers here
+  next();
+});
+
 const connection = mysql.createConnection({
   host: '195.35.53.19',
   user: 'u290118015_Insanity69',
