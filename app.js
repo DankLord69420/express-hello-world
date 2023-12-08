@@ -15,8 +15,8 @@ const connection = mysql.createConnection({
   password: 'u.BnV@BNb95X@hP',
   database: 'u290118015_DB_Insanity',
   connectionLimit: 10,
-  connectTimeout: 30000,
-  acquireTimeout: 30000,
+  connectTimeout: 0,
+  acquireTimeout: 0,
 });
 
 try {
