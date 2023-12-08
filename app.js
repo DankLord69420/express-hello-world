@@ -48,6 +48,38 @@ app.get('/api/fetch/:table/', (req, res) => {
   });
 });
 
+app.use(express.json()); // Add this line to parse JSON in the request body
+
+app.post('/api/insert/:table', (req, res) => {
+  const { table } = req.params;
+  const data = req.body;
+
+  if (!data || !data.nome || !data.resultado) {
+    return res.status(400).json({ error: "Bad Request. Incomplete data provided." });
+  }
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting MySQL connection:", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+
+    const query = `INSERT INTO ${table} SET ?`; // Use SET to pass an object for insertion
+
+    connection.query(query, data, (error, results) => {
+      connection.release();
+
+      if (error) {
+        console.error("Error executing query:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        res.json({ message: "Data inserted successfully", results });
+      }
+    });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
