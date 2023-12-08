@@ -1,14 +1,33 @@
 const express = require('express');
+const mysql = require('mysql');
 const app = express();
-const cors = require('cors');
-app.set('port', process.env.PORT || 8080);
-app.use(express.json());
-app.use(cors());
+const port = 3001;
 
-const touroRoute = require('./routes/touroRoutes');
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-app.use('/touro', touroRoute)
+const connection = mysql.createConnection({
+  host: '195.35.53.19',
+  user: 'u290118015_Insanity69',
+  password: 'u.BnV@BNb95X@hP',
+  database: 'u290118015_DB_Insanity',
+});
 
-app.use('/', (req, res) => {
-  res.send("Hello World!");
+connection.connect();
+
+app.get('/api/fetch/:table/', (req, res) => {
+  const { table } = req.params;
+
+  const query = `SELECT * FROM ${table} ORDER BY resultado DESC LIMIT 10`;
+  connection.query(query, (error, results) => {
+    if (error) throw error;
+    res.json(results);
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
