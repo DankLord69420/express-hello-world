@@ -9,35 +9,43 @@ app.use((req, res, next) => {
   next();
 });
 
-const connection = mysql.createConnection({
+// Create a connection pool
+const pool = mysql.createPool({
   host: '195.35.53.19',
   user: 'u290118015_Insanity69',
   password: 'u.BnV@BNb95X@hP',
   database: 'u290118015_DB_Insanity',
   connectionLimit: 10,
-  connectTimeout: 0,
-  acquireTimeout: 0,
+  connectTimeout: 30000,
+  acquireTimeout: 30000,
 });
 
-try {
-  connection.connect();
-} catch (error) {
-  console.error("Error connecting to MySQL:", error.message);
-}
-
+// Define your API endpoint
 app.get('/api/fetch/:table/', (req, res) => {
   const { table } = req.params;
 
-  const query = `SELECT * FROM ${table} ORDER BY resultado DESC LIMIT 10`;
-  connection.query(query, (error, results) => {
-    if (error) {
-      console.error("Error executing query:", error.message);
+  // Acquire a connection from the pool
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting MySQL connection:", err.message);
       res.status(500).json({ error: "Internal Server Error" });
-    } else {
-      res.json(results);
+      return;
     }
-  });
 
+    // Perform your query using the acquired connection
+    const query = `SELECT * FROM ${table} ORDER BY resultado DESC LIMIT 10`;
+    connection.query(query, (error, results) => {
+      // Release the connection back to the pool
+      connection.release();
+
+      if (error) {
+        console.error("Error executing query:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        res.json(results);
+      }
+    });
+  });
 });
 
 app.listen(port, () => {
