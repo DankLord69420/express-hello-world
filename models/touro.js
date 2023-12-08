@@ -16,8 +16,8 @@ var Touro = sequelize.define('TouroMecanico', {
         allowNull: false,
     },
 },
-{timestamps: false});
+    { timestamps: false });
 
-Touro.sync();
+Touro.sync({ force: true })
 
 module.exports = Touro;
