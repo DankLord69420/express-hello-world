@@ -80,6 +80,30 @@ app.post('/api/insert/:table', (req, res) => {
   });
 });
 
+app.get('/api/tables', (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting MySQL connection:", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+      return;
+    }
+
+    const query = "SHOW TABLES";
+
+    connection.query(query, (error, results) => {
+      connection.release();
+
+      if (error) {
+        console.error("Error executing query:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        const tables = results.map(result => result[`Tables_in_${pool.config.database}`]);
+        res.json({ tables });
+      }
+    });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
