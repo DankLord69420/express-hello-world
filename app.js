@@ -97,7 +97,7 @@ app.get('/api/tables', (req, res) => {
         console.error("Error executing query:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
       } else {
-        const tables = results.map(result => result[`Tables_in_${pool.config.database}`]);
+        const tables = results.map(result => Object.values(result)[0]);
         res.json({ tables });
       }
     });
