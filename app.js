@@ -14,15 +14,15 @@ app.use((req, res, next) => {
   next();
 });
 
-const getDriveService = () => {
+async function getDriveService() {
+  let client;
   const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-  const auth = new google.auth.GoogleAuth({
+  client = await authenticate({
     keyFile: TOKEN_PATH,
     scopes: SCOPES,
   });
-  const driveService = google.drive({ version: 'v3', auth });
-  return driveService;
+  return client;
 };
 
 async function listFiles(authClient) {
@@ -67,7 +67,7 @@ app.get('/api/listImage', async (req, res) => {
     // Respond with the list of files
     res.json(files);
   } catch (error) {
-    console.error('Error listing files:', error);
+    console.error('Error listing files:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
