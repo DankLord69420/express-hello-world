@@ -2,12 +2,48 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 const port = 3001;
+const path = require('path');
+const { authenticate } = require('@google-cloud/local-auth');
+const { google } = require('googleapis');
+const TOKEN_PATH = path.join(process.cwd(), 'token.json');
+
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+const getDriveService = () => {
+  const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+  const auth = new google.auth.GoogleAuth({
+    keyFile: TOKEN_PATH,
+    scopes: SCOPES,
+  });
+  const driveService = google.drive({ version: 'v3', auth });
+  return driveService;
+};
+
+async function listFiles(authClient) {
+  const drive = google.drive({ version: 'v3', auth: authClient });
+  const res = await drive.files.list({
+    pageSize: 10,
+    fields: 'nextPageToken, files(id, name)',
+  });
+  const files = res.data.files;
+  if (files.length === 0) {
+    console.log('No files found.');
+    return;
+  }
+
+  console.log('Files:');
+  files.map((file) => {
+    console.log(`${file.name} (${file.id})`);
+  });
+}
+
+
 
 // Create a connection pool
 const pool = mysql.createPool({
@@ -18,6 +54,22 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   connectTimeout: 30000,
   acquireTimeout: 30000,
+});
+
+app.get('/api/listImage', async (req, res) => {
+  try {
+    // You might need to pass the authentication information to this function
+    const authClient = getDriveService();
+
+    // Call the listFiles function
+    const files = await listFiles(authClient);
+
+    // Respond with the list of files
+    res.json(files);
+  } catch (error) {
+    console.error('Error listing files:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Define your API endpoint
