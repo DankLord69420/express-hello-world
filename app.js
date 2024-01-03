@@ -34,13 +34,15 @@ async function listFiles(authClient) {
   const files = res.data.files;
   if (files.length === 0) {
     console.log('No files found.');
-    return;
+    return [];
   }
 
-  console.log('Files:');
-  files.map((file) => {
-    console.log(`${file.name} (${file.id})`);
-  });
+  // Extract file information (id and name)
+  const fileData = files.map((file) => ({ id: file.id, name: file.name }));
+
+  // Return the array of file information
+  return fileData;
+
 }
 
 
