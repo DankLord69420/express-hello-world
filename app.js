@@ -14,11 +14,11 @@ app.use((req, res, next) => {
   next();
 });
 
-async function getDriveService() {
+const getDriveService = () => {
   let client;
   const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-  client = await authenticate({
+  client = new google.auth.GoogleAuth({
     keyFile: TOKEN_PATH,
     scopes: SCOPES,
   });
