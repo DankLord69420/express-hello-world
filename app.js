@@ -3,7 +3,6 @@ const mysql = require('mysql');
 const app = express();
 const port = 3001;
 const path = require('path');
-const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 
@@ -87,7 +86,7 @@ app.get('/api/fetch/:table/', (req, res) => {
     }
 
     // Perform your query using the acquired connection
-    const query = `SELECT * FROM ${table} ORDER BY resultado DESC LIMIT 10`;
+    const query = `SELECT * FROM \`${table}\` ORDER BY resultado DESC LIMIT 10`;
     connection.query(query, (error, results) => {
       // Release the connection back to the pool
       connection.release();
