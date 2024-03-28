@@ -13,7 +13,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const credentials = require('credentials.json');
+const credentials = require('./credentials.json');
 
 // Create an OAuth2 client
 const oauth2Client = new google.auth.OAuth2(
