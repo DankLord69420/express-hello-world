@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const app = express();
 const port = 3001;
 const path = require('path');
+const { auth } = require('google-auth-library');
 const { google } = require('googleapis');
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 
@@ -17,7 +18,7 @@ const getDriveService = () => {
   let client;
   const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
-  client = new google.auth.GoogleAuth({
+  client = new auth.getClient({
     keyFile: TOKEN_PATH,
     scopes: SCOPES,
   });
