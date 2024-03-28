@@ -13,16 +13,14 @@ app.use((req, res, next) => {
   next();
 });
 
-const getDriveService = () => {
-  let client;
-  const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const credentials = require('credentials.json');
 
-  client = new google.auth.GoogleAuth({
-    keyFile: TOKEN_PATH,
-    scopes: SCOPES,
-  });
-  return client;
-};
+// Create an OAuth2 client
+const oauth2Client = new google.auth.OAuth2(
+  credentials.client_id,
+  credentials.client_secret,
+  credentials.redirect_uris[0]
+);
 
 
 async function listFiles(authClient) {
@@ -61,10 +59,10 @@ const pool = mysql.createPool({
 app.get('/api/listImage', async (req, res) => {
   try {
     // You might need to pass the authentication information to this function
-    const authClient = getDriveService();
+    oauth2Client = getDriveService();
 
     // Call the listFiles function
-    const files = await listFiles(authClient);
+    const files = await listFiles(oauth2Client);
 
     // Respond with the list of files
     res.json(files);
