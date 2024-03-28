@@ -17,9 +17,9 @@ const credentials = require('./credentials.json');
 
 // Create an OAuth2 client
 const oauth2Client = new google.auth.OAuth2(
-  credentials.client_id,
-  credentials.client_secret,
-  credentials.redirect_uris[0]
+  '423769612820-fj1bhgh1v00m66havbd07pkjfq87qfc3.apps.googleusercontent.com',
+  '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',
+  'http://localhost:3000'
 );
 
 
