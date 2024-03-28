@@ -14,12 +14,16 @@ app.use((req, res, next) => {
 });
 
 const getDriveService = () => {
-  const auth = new google.auth.GoogleAuth({
+  let client;
+  const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+  client = new google.auth.GoogleAuth({
     keyFile: TOKEN_PATH,
-    scopes: ['https://www.googleapis.com/auth/drive'],
+    scopes: SCOPES,
   });
-  return google.drive({ version: 'v3', auth });
+  return client;
 };
+
 
 async function listFiles(authClient) {
   const drive = google.drive({ version: 'v3', auth: authClient });
