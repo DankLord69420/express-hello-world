@@ -8,7 +8,7 @@ const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://courageous-zabaione-0de405.netlify.app");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   next();
