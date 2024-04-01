@@ -62,6 +62,7 @@ const pool = mysql.createPool({
 app.get('/api/listImage', async (req, res) => {
   try {
     // You might need to pass the authentication information to this function
+    res.header('X-Content-Type-Options', 'nosniff');
     const authClient = getDriveService();
 
     // Call the listFiles function
