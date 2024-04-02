@@ -120,7 +120,7 @@ app.post('/api/insert/:table', (req, res) => {
       return;
     }
 
-    const query = `INSERT INTO ${table} SET ?`; // Use SET to pass an object for insertion
+    const query = `INSERT INTO \`${table}\` SET ?`; // Use SET to pass an object for insertion
 
     connection.query(query, data, (error, results) => {
       connection.release();
